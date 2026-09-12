@@ -11,104 +11,172 @@
     const preloaderCounter = document.getElementById('preloaderCounter');
     const preloaderLine = document.querySelector('.preloader-line');
     let progress = 0;
+    let preloaderDone = false;
+
+    function finishPreloader() {
+        if (preloaderDone) return;
+        preloaderDone = true;
+        if (preloaderCounter) preloaderCounter.textContent = '100';
+        if (preloaderLine) preloaderLine.style.width = '100%';
+        setTimeout(() => {
+            if (preloader) preloader.classList.add('done');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                const hero = document.getElementById('hero');
+                if (hero) hero.classList.add('revealed');
+            }, 250);
+        }, 150);
+    }
 
     function updatePreloader() {
+        if (preloaderDone) return;
         if (progress < 100) {
-            // Accelerate towards the end
-            const increment = progress < 70 ? Math.random() * 4 + 1 : Math.random() * 8 + 2;
+            const increment = progress < 60 ? (Math.random() * 15 + 10) : (Math.random() * 20 + 15);
             progress = Math.min(progress + increment, 100);
-            preloaderCounter.textContent = Math.floor(progress);
-            if (preloaderLine) {
-                preloaderLine.style.width = progress + '%';
+            if (preloaderCounter) preloaderCounter.textContent = Math.floor(progress);
+            if (preloaderLine) preloaderLine.style.width = progress + '%';
+            if (progress >= 100) {
+                finishPreloader();
+            } else {
+                setTimeout(updatePreloader, 25);
             }
-            requestAnimationFrame(() => {
-                setTimeout(updatePreloader, 20 + Math.random() * 30);
-            });
         } else {
-            preloaderCounter.textContent = '100';
-            setTimeout(() => {
-                preloader.classList.add('done');
-                document.body.style.overflow = '';
-                // Trigger hero animations after preloader slides away
-                setTimeout(() => {
-                    const hero = document.getElementById('hero');
-                    if (hero) hero.classList.add('revealed');
-                }, 400);
-            }, 400);
+            finishPreloader();
         }
     }
 
-    // Start preloader on DOM ready
+    // Start preloader on DOM ready, with safety fallback
     document.body.style.overflow = 'hidden';
     updatePreloader();
+    setTimeout(finishPreloader, 1000); // Safety fallback so user is never stuck
 
-    // -------- Custom Cursor --------
+    // -------- Mobile Navigation Drawer --------
+    const navHamburger = document.getElementById('navHamburger');
+    const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+    const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
+    const mobileNavClose = document.getElementById('mobileNavClose');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link, .mobile-cta-btn');
+
+    function openMobileMenu() {
+        if (!mobileNavOverlay) return;
+        mobileNavOverlay.classList.add('is-open');
+        mobileNavOverlay.setAttribute('aria-hidden', 'false');
+        if (navHamburger) {
+            navHamburger.classList.add('is-active');
+            navHamburger.setAttribute('aria-expanded', 'true');
+        }
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        if (!mobileNavOverlay) return;
+        mobileNavOverlay.classList.remove('is-open');
+        mobileNavOverlay.setAttribute('aria-hidden', 'true');
+        if (navHamburger) {
+            navHamburger.classList.remove('is-active');
+            navHamburger.setAttribute('aria-expanded', 'false');
+        }
+        document.body.style.overflow = '';
+    }
+
+    if (navHamburger) {
+        navHamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (mobileNavOverlay && mobileNavOverlay.classList.contains('is-open')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+    }
+
+    if (mobileNavClose) {
+        mobileNavClose.addEventListener('click', closeMobileMenu);
+    }
+
+    if (mobileNavBackdrop) {
+        mobileNavBackdrop.addEventListener('click', closeMobileMenu);
+    }
+
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            closeMobileMenu();
+        });
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileNavOverlay && mobileNavOverlay.classList.contains('is-open')) {
+            closeMobileMenu();
+        }
+    });
+
+    // -------- Custom Cursor (Fine pointer desktop devices only) --------
     const cursor = document.getElementById('customCursor');
     const cursorFollower = document.getElementById('customCursorFollower');
-    let mouseX = 0, mouseY = 0;
-    let cursorX = 0, cursorY = 0;
-    let followerX = 0, followerY = 0;
+    const hasFinePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-    let isCursorVisible = false;
+    if (hasFinePointer && cursor && cursorFollower) {
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        let followerX = 0, followerY = 0;
+        let isCursorVisible = false;
 
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        if (!isCursorVisible) {
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!isCursorVisible) {
+                cursor.style.opacity = '1';
+                cursorFollower.style.opacity = '1';
+                isCursorVisible = true;
+            }
+        });
+
+        document.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '0';
+            cursorFollower.style.opacity = '0';
+            isCursorVisible = false;
+        });
+
+        document.addEventListener('mouseenter', () => {
             cursor.style.opacity = '1';
             cursorFollower.style.opacity = '1';
             isCursorVisible = true;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.3;
+            cursorY += (mouseY - cursorY) * 0.3;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+
+            followerX += (mouseX - followerX) * 0.1;
+            followerY += (mouseY - followerY) * 0.1;
+            cursorFollower.style.left = followerX + 'px';
+            cursorFollower.style.top = followerY + 'px';
+
+            requestAnimationFrame(animateCursor);
         }
-    });
 
-    document.addEventListener('mouseleave', () => {
-        cursor.style.opacity = '0';
-        cursorFollower.style.opacity = '0';
-        isCursorVisible = false;
-    });
+        animateCursor();
 
-    document.addEventListener('mouseenter', () => {
-        cursor.style.opacity = '1';
-        cursorFollower.style.opacity = '1';
-        isCursorVisible = true;
-    });
+        function isHoverable(el) {
+            return el.closest('a, button, input, textarea, .floating-tag, .hero-photo-wrapper, .contact-card, .scope-pill, .matrix-link, .back-to-top-btn, .bento-item, .comparison-slider, .comparison-handle, .capability-pill, .photo-stat, .color-swatch-box, .tool-btn, .timeline-tracks-arena');
+        }
 
-    function animateCursor() {
-        // Main cursor — snappy
-        cursorX += (mouseX - cursorX) * 0.3;
-        cursorY += (mouseY - cursorY) * 0.3;
-        cursor.style.left = cursorX + 'px';
-        cursor.style.top = cursorY + 'px';
+        document.addEventListener('mouseover', (e) => {
+            if (isHoverable(e.target)) {
+                cursor.classList.add('cursor-hover');
+                cursorFollower.classList.add('cursor-hover');
+            }
+        });
 
-        // Follower — smooth trail
-        followerX += (mouseX - followerX) * 0.1;
-        followerY += (mouseY - followerY) * 0.1;
-        cursorFollower.style.left = followerX + 'px';
-        cursorFollower.style.top = followerY + 'px';
-
-        requestAnimationFrame(animateCursor);
+        document.addEventListener('mouseout', (e) => {
+            if (isHoverable(e.target)) {
+                cursor.classList.remove('cursor-hover');
+                cursorFollower.classList.remove('cursor-hover');
+            }
+        });
     }
-
-    animateCursor();
-
-    // Cursor hover effects with event delegation for all present & dynamic interactive elements
-    function isHoverable(el) {
-        return el.closest('a, button, input, textarea, .floating-tag, .hero-photo-wrapper, .contact-card, .scope-pill, .matrix-link, .back-to-top-btn, .bento-item, .comparison-slider, .comparison-handle, .capability-pill, .photo-stat, .color-swatch-box, .tool-btn, .timeline-tracks-arena');
-    }
-
-    document.addEventListener('mouseover', (e) => {
-        if (isHoverable(e.target)) {
-            cursor.classList.add('cursor-hover');
-            cursorFollower.classList.add('cursor-hover');
-        }
-    });
-
-    document.addEventListener('mouseout', (e) => {
-        if (isHoverable(e.target)) {
-            cursor.classList.remove('cursor-hover');
-            cursorFollower.classList.remove('cursor-hover');
-        }
-    });
 
     // -------- Parallax on Mouse Move --------
     const heroPhoto = document.getElementById('heroPhoto');
@@ -117,6 +185,7 @@
 
     if (hero && heroPhoto) {
         hero.addEventListener('mousemove', (e) => {
+            if (window.innerWidth <= 768) return;
             const rect = hero.getBoundingClientRect();
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
@@ -136,6 +205,7 @@
         });
 
         hero.addEventListener('mouseleave', () => {
+            if (window.innerWidth <= 768) return;
             heroPhoto.style.transform = 'translate(0, 0)';
             floatingTags.forEach((tag) => {
                 tag.style.transform = 'translate(0, 0)';
@@ -791,43 +861,91 @@
     const particleCtx = particleCanvas ? particleCanvas.getContext('2d') : null;
 
     const TOTAL_FRAMES = 300;
-    const droneFrames = [];
+    const isMobileViewport = window.innerWidth <= 768;
+    // Step frames on mobile (step by 2 = 150 frames: ultra smooth 360 rotation with 50% data saving)
+    const FRAME_STEP = isMobileViewport ? 2 : 1;
+    const droneFrames = new Array(TOTAL_FRAMES);
     let droneFramesLoaded = 0;
-    let currentDroneFrame = 0;
+    let currentDroneFrame = -1;
     let droneAnimActive = false;
+    let droneFramesPreloaded = false;
 
-    // Preload all drone frames
-    function preloadDroneFrames() {
-        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    // Load first frame immediately so canvas has image right away
+    function loadFirstFrame() {
+        if (!droneCanvas || !droneCtx) return;
+        const img = new Image();
+        img.src = 'drone frames/ezgif-frame-001.png';
+        img.onload = () => {
+            droneFrames[0] = img;
+            droneFramesLoaded++;
+            droneCanvas.width = img.naturalWidth;
+            droneCanvas.height = img.naturalHeight;
+            droneCtx.drawImage(img, 0, 0);
+            droneCanvas._lastDrawnImg = img;
+        };
+    }
+
+    if (droneCanvas) {
+        loadFirstFrame();
+    }
+
+    // Preload frames progressively in background
+    function startPreloadingFrames() {
+        if (droneFramesPreloaded) return;
+        droneFramesPreloaded = true;
+
+        for (let i = 1; i <= TOTAL_FRAMES; i += FRAME_STEP) {
+            if (i === 1 && droneFrames[0]) continue;
             const img = new Image();
             const num = String(i).padStart(3, '0');
             img.src = `drone frames/ezgif-frame-${num}.png`;
             img.onload = () => {
                 droneFramesLoaded++;
-                // Set canvas dimensions from first loaded frame
-                if (droneFramesLoaded === 1 && droneCanvas) {
-                    droneCanvas.width = img.naturalWidth;
-                    droneCanvas.height = img.naturalHeight;
-                    // Draw the first frame immediately
-                    droneCtx.drawImage(img, 0, 0);
+                if (droneAnimActive) {
+                    onDroneScroll();
                 }
             };
-            droneFrames.push(img);
+            droneFrames[i - 1] = img;
         }
     }
 
-    if (droneCanvas) {
-        preloadDroneFrames();
-    }
+    // Start downloading frames after initial page display
+    setTimeout(startPreloadingFrames, 600);
 
-    // Draw a specific frame on canvas
+    // Draw a specific frame on canvas with outward fallback to nearest available loaded frame
     function drawDroneFrame(index) {
-        if (!droneCtx || !droneFrames[index] || !droneFrames[index].complete) return;
-        if (index === currentDroneFrame) return; // skip redundant draws
+        if (!droneCtx || !droneCanvas) return;
+
+        let frameImg = droneFrames[index];
+        if (!frameImg || !frameImg.complete || !frameImg.naturalWidth) {
+            // Search outwards for closest loaded frame
+            let bestImg = null;
+            for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
+                const prev = droneFrames[index - offset];
+                if (prev && prev.complete && prev.naturalWidth) {
+                    bestImg = prev;
+                    break;
+                }
+                const next = droneFrames[index + offset];
+                if (next && next.complete && next.naturalWidth) {
+                    bestImg = next;
+                    break;
+                }
+            }
+            if (bestImg) {
+                frameImg = bestImg;
+            } else if (droneFrames[0] && droneFrames[0].complete && droneFrames[0].naturalWidth) {
+                frameImg = droneFrames[0];
+            }
+        }
+
+        if (!frameImg || !frameImg.complete || !frameImg.naturalWidth) return;
+        if (frameImg === droneCanvas._lastDrawnImg) return;
+        droneCanvas._lastDrawnImg = frameImg;
         currentDroneFrame = index;
 
         droneCtx.clearRect(0, 0, droneCanvas.width, droneCanvas.height);
-        droneCtx.drawImage(droneFrames[index], 0, 0);
+        droneCtx.drawImage(frameImg, 0, 0);
     }
 
     // Update HUD telemetry
@@ -924,13 +1042,32 @@
         }
     }, { passive: true });
 
-    // Activate HUD when drone section enters viewport
+    // Lazy preload frames when approaching drone section (within 800px)
+    if (droneSection) {
+        const preloadObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    startPreloadingFrames();
+                    preloadObserver.disconnect();
+                }
+            });
+        }, { rootMargin: '800px 0px' });
+        preloadObserver.observe(droneSection);
+    }
+
+    // Activate HUD & particles only when drone section enters viewport
+    let particleRunning = false;
+
     if (droneSection && droneHud) {
         const droneObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     droneHud.classList.add('active');
                     droneAnimActive = true;
+                    if (!particleRunning && particleCtx && particleCanvas) {
+                        particleRunning = true;
+                        animateParticles();
+                    }
                 } else {
                     droneHud.classList.remove('active');
                     droneAnimActive = false;
@@ -965,13 +1102,12 @@
     }
 
     function animateParticles() {
-        if (!particleCtx || !particleCanvas) return;
-        particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-
-        if (!droneAnimActive) {
-            requestAnimationFrame(animateParticles);
+        if (!particleCtx || !particleCanvas || !droneAnimActive) {
+            particleRunning = false;
             return;
         }
+
+        particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
 
         particles.forEach(p => {
             p.x += p.speedX;
@@ -1015,7 +1151,6 @@
     }
 
     initParticles();
-    animateParticles();
 
     // Resize particle canvas on window resize
     window.addEventListener('resize', () => {

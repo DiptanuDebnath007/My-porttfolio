@@ -63,7 +63,43 @@
                     </svg>
                 </a>
             </div>
+            <!-- Mobile Hamburger Button -->
+            <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+            </button>
         </nav>
+
+        <!-- Mobile Navigation Drawer Overlay -->
+        <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+            <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+            <div class="mobile-nav-drawer">
+                <div class="mobile-nav-header">
+                    <div class="nav-brand">
+                        <span class="nav-brand-symbol">◈</span>
+                        <span class="nav-brand-text">Diptanu Debnath</span>
+                    </div>
+                    <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close navigation menu">✕</button>
+                </div>
+                <nav class="mobile-nav-links">
+                    <a href="#about" class="mobile-nav-link"><span class="m-num">01</span> Web Development</a>
+                    <a href="#droneSequence" class="mobile-nav-link"><span class="m-num">02</span> Drone &amp; FPV</a>
+                    <a href="#video-editing" class="mobile-nav-link"><span class="m-num">03</span> Video Walkthroughs</a>
+                    <a href="#photography" class="mobile-nav-link"><span class="m-num">04</span> Photography Gallery</a>
+                    <a href="#photoEditing" class="mobile-nav-link"><span class="m-num">05</span> RAW Processing</a>
+                    <a href="#contact" class="mobile-nav-link"><span class="m-num">06</span> Contact &amp; Let's Talk</a>
+                </nav>
+                <div class="mobile-nav-footer">
+                    <a href="#contact" class="nav-cta-btn mobile-cta-btn">
+                        <span>Start a Project</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <!-- Hero Content -->
         <div class="hero-content">
@@ -80,7 +116,7 @@
             <!-- Photo Layer -->
             <div class="hero-photo-wrapper">
                 <div class="hero-photo" id="heroPhoto">
-                    <img src="photos/withoutbg.png" alt="Diptanu Debnath" class="hero-photo-img" id="heroPhotoImg">
+                    <img src="photos/withoutbg.png" alt="Diptanu Debnath" class="hero-photo-img" id="heroPhotoImg" fetchpriority="high" decoding="async">
                 </div>
                 <!-- Floating glow behind photo -->
                 <div class="hero-photo-glow"></div>
@@ -88,13 +124,22 @@
 
 
 
-            <!-- Role Titles -->
-            <div class="hero-roles">
+            <!-- Role Titles — Left & Right of Body -->
+            <div class="hero-roles hero-roles-left">
                 <div class="hero-role-line">
-                    <span class="hero-role" data-animate="role">Web Developer & Engineer</span>
+                    <span class="hero-role" data-animate="role">Web Developer &amp; Engineer</span>
                 </div>
                 <div class="hero-role-line">
-                    <span class="hero-role" data-animate="role">Drone Pilot & Builder</span>
+                    <span class="hero-role" data-animate="role">Video Editor &amp; Motion</span>
+                </div>
+            </div>
+
+            <div class="hero-roles hero-roles-right">
+                <div class="hero-role-line">
+                    <span class="hero-role" data-animate="role">Drone Pilot &amp; Builder</span>
+                </div>
+                <div class="hero-role-line">
+                    <span class="hero-role" data-animate="role">Photographer &amp; Photo Editor</span>
                 </div>
             </div>
 
@@ -179,6 +224,12 @@
                 <span class="marquee-separator">✦</span>
                 <span class="marquee-item">FPV PILOT</span>
                 <span class="marquee-separator">✦</span>
+                <span class="marquee-item">VIDEO EDITOR</span>
+                <span class="marquee-separator">✦</span>
+                <span class="marquee-item">PHOTOGRAPHER</span>
+                <span class="marquee-separator">✦</span>
+                <span class="marquee-item">PHOTO EDITOR</span>
+                <span class="marquee-separator">✦</span>
                 <span class="marquee-item">ROBOT MAKER</span>
                 <span class="marquee-separator">✦</span>
                 <span class="marquee-item">RC HOBBYIST</span>
@@ -190,6 +241,12 @@
                 <span class="marquee-item">DRONE BUILDER</span>
                 <span class="marquee-separator">✦</span>
                 <span class="marquee-item">FPV PILOT</span>
+                <span class="marquee-separator">✦</span>
+                <span class="marquee-item">VIDEO EDITOR</span>
+                <span class="marquee-separator">✦</span>
+                <span class="marquee-item">PHOTOGRAPHER</span>
+                <span class="marquee-separator">✦</span>
+                <span class="marquee-item">PHOTO EDITOR</span>
                 <span class="marquee-separator">✦</span>
                 <span class="marquee-item">ROBOT MAKER</span>
                 <span class="marquee-separator">✦</span>
@@ -343,7 +400,7 @@
                                     <div class="monitor-video-container" id="monitorVideoContainer">
                                         <!-- Real Project Showcase Video -->
                                         <video id="webdevMainVideo" class="webdev-main-video" autoplay muted loop
-                                            playsinline poster="photos/withoutbg.png">
+                                            playsinline preload="metadata" poster="photos/withoutbg.png">
                                             <source id="webdevVideoSource" src="videos/project-1.mp4" type="video/mp4">
                                         </video>
 
@@ -2584,7 +2641,7 @@ videos/edit-vfx.mp4         ← (3D Motion Graphics &amp; VFX)</code></pre>
                             <!-- Before image area (RAW D-LOG) -->
                             <div class="comparison-before" id="comparisonBefore">
                                 <img src="photos/drone_comparison.jpg" alt="Unprocessed RAW D-Log capture"
-                                    class="comp-img comp-img-raw" />
+                                    class="comp-img comp-img-raw" loading="lazy" decoding="async" />
                                 <div class="comparison-badge before-badge">
                                     <span class="badge-status-dot raw-dot"></span>
                                     <span>RAW // D-LOG M</span>
@@ -2597,7 +2654,7 @@ videos/edit-vfx.mp4         ← (3D Motion Graphics &amp; VFX)</code></pre>
                             <!-- After image area (GRADED) -->
                             <div class="comparison-after">
                                 <img src="photos/drone_comparison.jpg" alt="Color graded & retouched capture"
-                                    class="comp-img comp-img-graded" id="compGradedImg" />
+                                    class="comp-img comp-img-graded" id="compGradedImg" loading="lazy" decoding="async" />
                                 <div class="comparison-badge after-badge">
                                     <span class="badge-status-dot graded-dot"></span>
                                     <span id="activeGradeName">COLOR GRADED // GOLDEN CINEMA</span>
@@ -3226,6 +3283,7 @@ videos/edit-vfx.mp4         ← (3D Motion Graphics &amp; VFX)</code></pre>
                     </div>
                 </div>
             </footer>
+        </div>
     </section>
 
     <script src="script.js"></script>
