@@ -402,8 +402,17 @@
 
     // -------- Contact Form Submission & Protocol Telemetry (EmailJS) --------
     const EMAILJS_SERVICE_ID = 'service_ce5q0u8';
-    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // e.g. 'template_xxxxxxx'
-    const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';   // e.g. 'Public Key from EmailJS Account'
+    const EMAILJS_TEMPLATE_ID = 'template_9j2b19l';
+    const EMAILJS_PUBLIC_KEY = 'Gy0LvzmW_5SBLQm6e';
+
+    // Initialize EmailJS SDK if available
+    if (typeof emailjs !== 'undefined') {
+        try {
+            emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        } catch (err) {
+            console.warn('EmailJS SDK init note:', err);
+        }
+    }
 
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -436,13 +445,6 @@
                 return;
             }
 
-            // Check if Template ID and Public Key are set
-            if (EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-                formStatusMsg.textContent = '⚠ SETUP NEEDED: Please provide your EmailJS Template ID and Public Key.';
-                formStatusMsg.classList.add('error');
-                return;
-            }
-
             // Enter dispatching state
             submitBtn.classList.add('sending');
             submitBtn.disabled = true;
@@ -471,7 +473,7 @@
             };
 
             const sendEmail = (typeof emailjs !== 'undefined')
-                ? emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY)
+                ? emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, { publicKey: EMAILJS_PUBLIC_KEY })
                 : fetch('https://api.emailjs.com/api/v1.0/email/send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
