@@ -400,7 +400,11 @@
         });
     }
 
-    // -------- Contact Form Submission & Protocol Telemetry --------
+    // -------- Contact Form Submission & Protocol Telemetry (EmailJS) --------
+    const EMAILJS_SERVICE_ID = 'service_ce5q0u8';
+    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // e.g. 'template_xxxxxxx'
+    const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';   // e.g. 'Public Key from EmailJS Account'
+
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const formStatusMsg = document.getElementById('formStatusMsg');
@@ -432,6 +436,13 @@
                 return;
             }
 
+            // Check if Template ID and Public Key are set
+            if (EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+                formStatusMsg.textContent = '⚠ SETUP NEEDED: Please provide your EmailJS Template ID and Public Key.';
+                formStatusMsg.classList.add('error');
+                return;
+            }
+
             // Enter dispatching state
             submitBtn.classList.add('sending');
             submitBtn.disabled = true;
@@ -444,42 +455,53 @@
                 </svg>
             `;
 
-            const formData = new FormData(contactForm);
+            // Prepare template parameters compatible with standard EmailJS template tags
+            const templateParams = {
+                name: name,
+                user_name: name,
+                from_name: name,
+                email: email,
+                user_email: email,
+                reply_to: email,
+                subject: subject,
+                user_subject: subject,
+                message: message,
+                user_message: message,
+                selected_scope: document.getElementById('selectedScope')?.value || 'Web Development'
+            };
 
-            fetch('https://formspree.io/f/xwlkzgbn', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(async (response) => {
-                submitBtn.classList.remove('sending');
-                submitBtn.disabled = false;
-                submitBtn.querySelector('.btn-text').innerHTML = originalBtnHtml;
+            const sendEmail = (typeof emailjs !== 'undefined')
+                ? emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY)
+                : fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        service_id: EMAILJS_SERVICE_ID,
+                        template_id: EMAILJS_TEMPLATE_ID,
+                        user_id: EMAILJS_PUBLIC_KEY,
+                        template_params: templateParams
+                    })
+                });
 
-                if (response.ok) {
+            Promise.resolve(sendEmail)
+                .then((res) => {
+                    submitBtn.classList.remove('sending');
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('.btn-text').innerHTML = originalBtnHtml;
+
                     if (consoleSuccess) {
                         consoleSuccess.classList.add('active');
                     }
                     contactForm.reset();
-                } else {
-                    const data = await response.json().catch(() => null);
-                    if (data && data.errors && data.errors.length > 0) {
-                        formStatusMsg.textContent = '⚠ ERROR: ' + data.errors.map(err => err.message).join(', ');
-                    } else {
-                        formStatusMsg.textContent = '⚠ ERROR: Dispatch failed. Please try again or reach out via direct email.';
-                    }
+                })
+                .catch((err) => {
+                    submitBtn.classList.remove('sending');
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('.btn-text').innerHTML = originalBtnHtml;
+                    const errDetail = err?.text || err?.message || 'Transmission failed. Please verify credentials.';
+                    formStatusMsg.textContent = `⚠ TRANSMISSION FAILURE: ${errDetail}`;
                     formStatusMsg.classList.add('error');
-                }
-            })
-            .catch(() => {
-                submitBtn.classList.remove('sending');
-                submitBtn.disabled = false;
-                submitBtn.querySelector('.btn-text').innerHTML = originalBtnHtml;
-                formStatusMsg.textContent = '⚠ TRANSMISSION FAILURE: Network error. Please check your connection.';
-                formStatusMsg.classList.add('error');
-            });
+                });
         });
     }
 
