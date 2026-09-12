@@ -434,6 +434,7 @@
 
             // Enter dispatching state
             submitBtn.classList.add('sending');
+            submitBtn.disabled = true;
             const originalBtnHtml = submitBtn.querySelector('.btn-text').innerHTML;
             submitBtn.querySelector('.btn-text').innerHTML = `
                 <span>TRANSMITTING PACKET...</span>
@@ -443,14 +444,42 @@
                 </svg>
             `;
 
-            // Simulated transmission protocol
-            setTimeout(() => {
-                submitBtn.classList.remove('sending');
-                submitBtn.querySelector('.btn-text').innerHTML = originalBtnHtml;
-                if (consoleSuccess) {
-                    consoleSuccess.classList.add('active');
+            const formData = new FormData(contactForm);
+
+            fetch('https://formspree.io/f/xwlkzgbn', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
                 }
-            }, 1200);
+            })
+            .then(async (response) => {
+                submitBtn.classList.remove('sending');
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.btn-text').innerHTML = originalBtnHtml;
+
+                if (response.ok) {
+                    if (consoleSuccess) {
+                        consoleSuccess.classList.add('active');
+                    }
+                    contactForm.reset();
+                } else {
+                    const data = await response.json().catch(() => null);
+                    if (data && data.errors && data.errors.length > 0) {
+                        formStatusMsg.textContent = '⚠ ERROR: ' + data.errors.map(err => err.message).join(', ');
+                    } else {
+                        formStatusMsg.textContent = '⚠ ERROR: Dispatch failed. Please try again or reach out via direct email.';
+                    }
+                    formStatusMsg.classList.add('error');
+                }
+            })
+            .catch(() => {
+                submitBtn.classList.remove('sending');
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.btn-text').innerHTML = originalBtnHtml;
+                formStatusMsg.textContent = '⚠ TRANSMISSION FAILURE: Network error. Please check your connection.';
+                formStatusMsg.classList.add('error');
+            });
         });
     }
 
