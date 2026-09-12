@@ -40,67 +40,68 @@
     <!-- Noise Overlay -->
     <div class="noise-overlay"></div>
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <!-- Navigation -->
-        <nav class="nav" id="nav">
-            <div class="nav-brand">
-                <span class="nav-brand-symbol">◈</span>
-                <span class="nav-brand-text">Diptanu Debnath</span>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-brand">
+            <span class="nav-brand-symbol">◈</span>
+            <span class="nav-brand-text">Diptanu Debnath</span>
+        </div>
+        <div class="nav-links">
+            <a href="#about" class="nav-link" data-text="Web Dev">Web Dev</a>
+            <a href="#video-editing" class="nav-link" data-text="Video">Video</a>
+            <a href="#photography" class="nav-link" data-text="Creative">Creative</a>
+            <a href="#contact" class="nav-link" data-text="Contact">Contact</a>
+        </div>
+        <div class="nav-cta">
+            <a href="#contact" class="nav-cta-btn">
+                <span>Let's Talk</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+        </div>
+        <!-- Mobile Hamburger Button -->
+        <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Navigation Drawer Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
+        <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+        <div class="mobile-nav-drawer">
+            <div class="mobile-nav-header">
+                <div class="nav-brand">
+                    <span class="nav-brand-symbol">◈</span>
+                    <span class="nav-brand-text">Diptanu Debnath</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close navigation menu">✕</button>
             </div>
-            <div class="nav-links">
-                <a href="#about" class="nav-link" data-text="Web Dev">Web Dev</a>
-                <a href="#video-editing" class="nav-link" data-text="Video">Video</a>
-                <a href="#photography" class="nav-link" data-text="Creative">Creative</a>
-                <a href="#contact" class="nav-link" data-text="Contact">Contact</a>
-            </div>
-            <div class="nav-cta">
-                <a href="#contact" class="nav-cta-btn">
-                    <span>Let's Talk</span>
+            <nav class="mobile-nav-links">
+                <a href="#about" class="mobile-nav-link"><span class="m-num">01</span> Web Development</a>
+                <a href="#droneSequence" class="mobile-nav-link"><span class="m-num">02</span> Drone &amp; FPV</a>
+                <a href="#video-editing" class="mobile-nav-link"><span class="m-num">03</span> Video Walkthroughs</a>
+                <a href="#photography" class="mobile-nav-link"><span class="m-num">04</span> Photography Gallery</a>
+                <a href="#photoEditing" class="mobile-nav-link"><span class="m-num">05</span> RAW Processing</a>
+                <a href="#contact" class="mobile-nav-link"><span class="m-num">06</span> Contact &amp; Let's Talk</a>
+            </nav>
+            <div class="mobile-nav-footer">
+                <a href="#contact" class="nav-cta-btn mobile-cta-btn">
+                    <span>Start a Project</span>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="1.5"
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </a>
             </div>
-            <!-- Mobile Hamburger Button -->
-            <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation menu" aria-expanded="false">
-                <span class="hamburger-bar"></span>
-                <span class="hamburger-bar"></span>
-            </button>
-        </nav>
-
-        <!-- Mobile Navigation Drawer Overlay -->
-        <div class="mobile-nav-overlay" id="mobileNavOverlay" aria-hidden="true">
-            <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
-            <div class="mobile-nav-drawer">
-                <div class="mobile-nav-header">
-                    <div class="nav-brand">
-                        <span class="nav-brand-symbol">◈</span>
-                        <span class="nav-brand-text">Diptanu Debnath</span>
-                    </div>
-                    <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close navigation menu">✕</button>
-                </div>
-                <nav class="mobile-nav-links">
-                    <a href="#about" class="mobile-nav-link"><span class="m-num">01</span> Web Development</a>
-                    <a href="#droneSequence" class="mobile-nav-link"><span class="m-num">02</span> Drone &amp; FPV</a>
-                    <a href="#video-editing" class="mobile-nav-link"><span class="m-num">03</span> Video Walkthroughs</a>
-                    <a href="#photography" class="mobile-nav-link"><span class="m-num">04</span> Photography Gallery</a>
-                    <a href="#photoEditing" class="mobile-nav-link"><span class="m-num">05</span> RAW Processing</a>
-                    <a href="#contact" class="mobile-nav-link"><span class="m-num">06</span> Contact &amp; Let's Talk</a>
-                </nav>
-                <div class="mobile-nav-footer">
-                    <a href="#contact" class="nav-cta-btn mobile-cta-btn">
-                        <span>Start a Project</span>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
         </div>
+    </div>
 
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
         <!-- Hero Content -->
         <div class="hero-content">
             <!-- Name Layer — BACK (behind image) -->
