@@ -457,6 +457,8 @@
                 </svg>
             `;
 
+            const currentScope = document.getElementById('selectedScope')?.value || 'Web Development';
+
             // Prepare template parameters compatible with standard EmailJS template tags
             const templateParams = {
                 name: name,
@@ -469,7 +471,11 @@
                 user_subject: subject,
                 message: message,
                 user_message: message,
-                selected_scope: document.getElementById('selectedScope')?.value || 'Web Development'
+                selected_scope: currentScope,
+                scope: currentScope,
+                discipline: currentScope,
+                project_scope: currentScope,
+                project_discipline: currentScope
             };
 
             const sendEmail = (typeof emailjs !== 'undefined')
